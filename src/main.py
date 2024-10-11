@@ -31,11 +31,13 @@ class MainWindow(QMainWindow):
         # Add the actions to the menubar
         # filemenu.addAction(self.actions.open_action)
         filemenu.addAction(self.actions.create_subject)
+        filemenu.addAction(self.actions.create_unit)
         filemenu.addAction(self.actions.create_lesson)
         filemenu.addAction(self.actions.create_card)
 
         # Add the actions to the toolbar
         toolbar.addAction(self.actions.create_subject)
+        toolbar.addAction(self.actions.create_unit)
         toolbar.addAction(self.actions.create_lesson)
         toolbar.addAction(self.actions.create_card)
 
@@ -54,10 +56,14 @@ class MainWindow(QMainWindow):
         self.setStatusBar(statusbar)
         self.statusBar().showMessage("Application Running", 3000)
 
+    def customMessage(self, message, timeout=3000):
+        self.statusBar().showMessage(message, timeout)
+
 # Main application execution
-app = QApplication(sys.argv)
-app.setStyle("Fusion")
-window = MainWindow()
-window.show()
-window.showMaximized()
-sys.exit(app.exec())
+if __name__=="__main__":
+    app = QApplication(sys.argv)
+    app.setStyle("Fusion")
+    window = MainWindow()
+    window.show()
+    window.showMaximized()
+    sys.exit(app.exec())

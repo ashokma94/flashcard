@@ -14,6 +14,9 @@ class AppActions:
         self.create_subject = QAction(QIcon(self.resource_path("images/subject.png")), "Add Subject", self.main_window)
         self.create_subject.triggered.connect(self.createNewSubject)
 
+        self.create_unit = QAction(QIcon(self.resource_path("images/unit.png")), "Add Unit", self.main_window)
+        self.create_unit.triggered.connect(self.createNewUnit)
+
         self.create_lesson = QAction(QIcon(self.resource_path("images/lesson.png")), "Add Lesson", self.main_window)
         self.create_lesson.triggered.connect(self.createNewLesson)
 
@@ -32,56 +35,55 @@ class AppActions:
             subject_id = self.database.addSubject(subject_name)
             self.main_window.left_panel.populate_tree(subject_id) # Refresh the tree view after adding a subject
 
-    def createNewLesson(self):
+    def createNewUnit(self):
         # Get the currently selected item from the tree view
         selected_item = self.main_window.left_panel.currentItem()  # Get the selected item from TreeView
 
         if selected_item is not None:
-            # Check if the selected item is a subject or a lesson
+            # Check if the selected item is a subject or a unit
             parent_item = selected_item.parent()  # Get the parent item
 
-            # Show dialog to add a new lesson
-            dialog = OkDialog("Add New Lesson", "Enter The Lesson Name:")
+            # Show dialog to add a new unit
+            dialog = OkDialog("Add New Unit", "Enter The Unit Name:")
             if dialog.exec() == dialog.DialogCode.Accepted:
-                lesson_name = dialog.getinput()  # Get the lesson name from the dialog
+                unit_name = dialog.getinput()  # Get the unit name from the dialog
                 
                 if parent_item is None:
                     # It's a subject, retrieve the subject ID
                     subject_id = selected_item.data(0, Qt.ItemDataRole.UserRole)  # Retrieve the subject ID
                 else:
-                    # It's a lesson, retrieve the subject ID from the parent
+                    # It's a unit, retrieve the subject ID from the parent
                     subject_id = parent_item.data(0, Qt.ItemDataRole.UserRole)  # Retrieve the subject ID from the parent
                 
-                # Add the lesson with the subject ID
-                self.database.addLesson(subject_id, lesson_name)
-                self.main_window.left_panel.populate_tree(subject_id)  # Refresh the tree view after adding a lesson
+                # Add the unit with the subject ID
+                self.database.addUnit(subject_id, unit_name)
+                self.main_window.left_panel.populate_tree(subject_id)  # Refresh the tree view after adding a unit
         else:
-            QMessageBox.warning(self.main_window, "Selection Error", "Please select a subject or lesson to add a lesson.")
+            QMessageBox.warning(self.main_window, "Selection Error", "Please select a subject to add a unit.")
+
+    def createNewLesson(self):
+        pass
 
     def createNewCard(self):
         # Get the currently selected item from the tree view
         selected_item = self.main_window.left_panel.currentItem()
 
-        # Check if the selected item is not empty and is a lesson
+        # Check if the selected item is not empty and is a unit
         if selected_item is None or selected_item.parent() is None:
-            QMessageBox.warning(self.main_window, "Selection Error", "Please select a lesson to add a card.")
+            QMessageBox.warning(self.main_window, "Selection Error", "Please select a unit to add a card.")
             return  # Exit the method if no item is selected
 
-        # It's a lesson, show the dialog to add a card
+        # It's a unit, show the dialog to add a card
         dialog = Card()
         if dialog.exec() == dialog.DialogCode.Accepted:
             card_data = dialog.getinput()
-            lesson_id = selected_item.data(0, Qt.ItemDataRole.UserRole)  # Retrieve the lesson ID
-            lastinsertid=self.database.addCard(card_data['question'], card_data['answer'], lesson_id)  # Add the card with the lesson ID
-            # print(self.main_window.cards)  # Check if this exists before appending
-            print(self.main_window.cards.cardList)  # Check the card list before appending
-            # Refresh the tree view after adding a card
-            # self.main_window.left_panel.populate_tree(selected_item.parent().data(0, Qt.ItemDataRole.UserRole))
-            self.main_window.cards.cardList.append(lastinsertid)
+            unit_id = selected_item.data(0, Qt.ItemDataRole.UserRole)  # Retrieve the unit ID
+            lastinsertid=self.database.addCard(card_data['question'], card_data['answer'], unit_id)  # Add the card with the unit ID
+            self.main_window.cards.cardList.append(lastinsertid) # Refresh the tree view after adding a card
 
-    def getCardIdList(self, lessonid):
+    def getCardIdList(self, unitid):
         # Retrieve the card IDs for the given item ID
-        return self.database.getCardIds(lessonid)
+        return self.database.getCardIds(unitid)
     
     def getCard(self, cardid):
         # Retrieve the card IDs for the given item ID

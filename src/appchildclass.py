@@ -36,7 +36,7 @@ class CardItems:
         if self.current_index > 0:
             self.current_index -= 1
         else:
-            self.main_window.statusBar().showMessage("No cards to show", 3000)
+            self.main_window.customMessage("No more cards to show")
         return self.current  # Return the card at the new index
 
     def next(self):
@@ -44,7 +44,7 @@ class CardItems:
         if self.current_index < len(self.cardList) - 1:
             self.current_index += 1
         else:
-            self.main_window.statusBar().showMessage("No cards to show", 3000)
+            self.main_window.customMessage("No more cards to show")
         return self.current  # Return the card at the new index
     
     def reset(self):
