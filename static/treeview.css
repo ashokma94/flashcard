@@ -1,0 +1,55 @@
+/* General styling for tree items */
+QTreeWidget::item {
+    padding: 2px;
+    margin: 0px;
+    color: white;
+}
+
+QTreeWidget{
+    background-color:#888;
+}
+
+/* Styling for selected items */
+QTreeWidget::item:selected {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Styling when the mouse hovers over an item */
+QTreeWidget::item:hover {
+    background-color: #cceeff;
+    color: black;
+    font-weight: bold;
+}
+
+/* Custom image for closed branches (folders) that have children */
+QTreeWidget::branch:closed:has-children {
+    /* image: url(right_arrow); */
+    image: url(images/icons/arrow_right.png);
+}
+
+/* Custom image for open branches that have children */
+QTreeWidget::branch:open:has-children {
+    /* image: url(down_arrow); */
+    image: url(images/icons/arrow_down.png);
+}
+
+QScrollBar:vertical {
+    background: #f0f0f0;
+    width: 12px;
+    margin: 22px 0 22px 0;
+}
+
+QScrollBar::handle:vertical {
+    background: #888;
+    border-radius: 6px;
+    min-height: 10px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #555;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0;
+}

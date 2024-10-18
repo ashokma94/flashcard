@@ -1,0 +1,10 @@
+
+    QTextEdit {
+        border: none;  /* No border on the text editor */
+    }
+    QScrollBar:vertical {
+        border: 1px solid red;  /* Vertical scrollbar styling */
+    }
+    QScrollBar:horizontal {
+        border: 1px solid blue;  /* Horizontal scrollbar styling */
+    }

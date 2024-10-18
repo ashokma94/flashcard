@@ -23,6 +23,15 @@ class AppActions:
         self.create_card = QAction(QIcon(self.resource_path("images/question.png")), "Add Card", self.main_window)
         self.create_card.triggered.connect(self.createNewCard)
 
+        self.delete = QAction(QIcon(self.resource_path("images/delete.png")), "Delete", self.main_window)
+        self.delete.triggered.connect(self.deleteItem)
+
+        self.move_up = QAction(QIcon(self.resource_path("images/arrow_up.png")), "Move Up", self.main_window)
+        self.move_up.triggered.connect(self.moveUp)
+
+        self.move_down = QAction(QIcon(self.resource_path("images/arrow_down.png")), "Move Down", self.main_window)
+        self.move_down.triggered.connect(self.moveDown)
+
     def resource_path(self, relative_path):
         if hasattr(sys, '_MEIPASS'):
             return os.path.join(sys._MEIPASS, relative_path)
@@ -33,11 +42,11 @@ class AppActions:
         if dialog.exec() == dialog.DialogCode.Accepted:
             subject_name = dialog.getinput()
             subject_id = self.database.addSubject(subject_name)
-            self.main_window.left_panel.populate_tree(subject_id) # Refresh the tree view after adding a subject
+            self.main_window.tree_view.populate_tree(subject_id) # Refresh the tree view after adding a subject
 
     def createNewUnit(self):
         # Get the currently selected item from the tree view
-        selected_item = self.main_window.left_panel.currentItem()  # Get the selected item from TreeView
+        selected_item = self.main_window.tree_view.currentItem()  # Get the selected item from TreeView
 
         if selected_item is not None:
             # Check if the selected item is a subject or a unit
@@ -57,16 +66,26 @@ class AppActions:
                 
                 # Add the unit with the subject ID
                 self.database.addUnit(subject_id, unit_name)
-                self.main_window.left_panel.populate_tree(subject_id)  # Refresh the tree view after adding a unit
+                self.main_window.tree_view.populate_tree(subject_id)  # Refresh the tree view after adding a unit
         else:
             QMessageBox.warning(self.main_window, "Selection Error", "Please select a subject to add a unit.")
 
     def createNewLesson(self):
-        pass
+        selected_item = self.main_window.tree_view.getSubjectAndUnitId()
+        if selected_item is None:
+            QMessageBox.warning(self.main_window, "Selection Error", "Please select a unit to add a lesson.")
+            return  # Exit the method if no item is selected
+
+        dialog = OkDialog("Add New Unit", "Enter The Lesson Name:")
+        if dialog.exec()==dialog.DialogCode.Accepted:
+            lesson_name=dialog.getinput()
+            subject_id, unit_id=selected_item
+            self.database.addLesson(unit_id, lesson_name)
+            self.main_window.tree_view.populate_tree(subject_id, unit_id)  # Refresh the tree view after adding a unit
 
     def createNewCard(self):
         # Get the currently selected item from the tree view
-        selected_item = self.main_window.left_panel.currentItem()
+        selected_item = self.main_window.tree_view.currentItem()
 
         # Check if the selected item is not empty and is a unit
         if selected_item is None or selected_item.parent() is None:
@@ -88,3 +107,39 @@ class AppActions:
     def getCard(self, cardid):
         # Retrieve the card IDs for the given item ID
         return self.database.getCard(cardid)
+    
+    def deleteItem(self):
+        table_name, id = self.main_window.tree_view.getItemTypeAndId()
+        status=self.database.delete(table_name, id)
+        if status:
+            self.main_window.tree_view.populate_tree()
+            QMessageBox.information(self.main_window, "Status", "Successfully deleted")
+        else:
+            QMessageBox.critical(self.main_window, "Status", "Operation failed.  Please select the item to delete.")
+
+    def moveUp(self):
+        pass
+
+    def moveDown(self):
+        pass
+
+    # def login(self):
+    #     while True:
+    #         dialog = Login()
+    #         if dialog.exec() == dialog.DialogCode.Accepted:
+    #             user_login_data = dialog.get_username_password()
+                
+    #             # Check if username and password are provided
+    #             if not user_login_data["username"] or not user_login_data["password"]:
+    #                 # Show an input error message
+    #                 QMessageBox.warning(self.main_window, "Input Error", "Username and password required")
+    #                 continue  # Prompt again for input
+                
+    #             status = self.database.userLogin(user_login_data)
+    #             if status:
+    #                 print("Login Success. Implementation pending")
+    #                 break  # Exit loop if login is successful
+    #             else:
+    #                 QMessageBox.warning(self.main_window, "Login Error", "Username or password incorrect")
+    #         else:
+    #             break  # Exit loop if dialog is canc

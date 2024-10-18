@@ -21,12 +21,12 @@ class CardItems:
         self.cardList=[]
         self.main_window=main_window
         self.current_index = 0  # Start at the first card
-        print("Card List", self.cardList)
+        # print("Card List", self.cardList)
     
     @property
     def current(self):
         """Return the current card."""
-        print("Current Index", self.current_index)
+        # print("Current Index", self.current_index)
         if not self.cardList:
             return None  # No cards available
         return self.cardList[self.current_index]
